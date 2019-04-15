@@ -1,13 +1,8 @@
-## [project-title] Changelog
+## Ethereal Community Project Changelog
 
-<a name="x.y.z"></a>
-# x.y.z (yyyy-mm-dd)
+<a name="genesis"></a>
+# genesis (2019-04-15)
 
 *Features*
-* ...
-
-*Bug Fixes*
-* ...
-
-*Breaking Changes*
-* ...
+* Initial directory structure created
+* Bounties created
