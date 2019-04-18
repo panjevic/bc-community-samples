@@ -1,4 +1,4 @@
-pragma solidity >=0.4.21;
+pragma solidity >=0.5.1;
 
 contract Audit {
 
@@ -8,39 +8,40 @@ contract Audit {
     struct Document {
         uint DocumentId;
         address Owner;
+        string State;
         bytes32 DocumentHash;        
     }
 
-    mapping(uint => string) public documentStates;    
-    Document[] documents;
+    mapping(uint => Document) public documents;    
+    
     uint documentCount;
 
     function addDocument(uint documentId, string memory state, bytes32 documentHash) public {
-        uint id = documentCount++;
+        documentCount++;
 
         Document memory doc = Document({
-            DocumentId : id,
+            DocumentId : documentId,
             Owner : msg.sender,
+            State : state,
             DocumentHash : documentHash
         });
-
-        documents.push(doc);
-        documentStates[documentId] = state;        
         
-        emit DocumentAdded(id, msg.sender, state);
+        documents[documentId] = doc;        
+        
+        emit DocumentAdded(documentId, msg.sender, state);
     }
 
     function setState(uint documentId, string memory state, bytes32 documentHash) public {
 
         require(documents[documentId].DocumentHash == documentHash, "Document has changed.");
 
-        documentStates[documentId] = state;
+        documents[documentId].State = state;
         
         emit DocumentStateChanged(documentId, state);
     }
 
     function getState(uint documentId) public view returns (string memory) {
-        return documentStates[documentId];        
+        return documents[documentId].State;        
     }
     
     function getCount() public view returns (uint) {
