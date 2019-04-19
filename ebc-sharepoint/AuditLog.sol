@@ -1,4 +1,4 @@
-pragma solidity >=0.5.1;
+pragma solidity >=0.5.0;
 
 // This simple contract is used to showcase interaction with Ethereum network and should not be used as a reference point for any smart contract implementations
 contract AuditLog {
