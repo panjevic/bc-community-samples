@@ -1,0 +1,122 @@
+{
+    "$connections": {
+        "value": {
+            "blockchainethereum_1": {
+                "connectionId": "/subscriptions/1351f53f-23e6-41d5-9615-fc64f09dc660/resourceGroups/hackaton19/providers/Microsoft.Web/connections/blockchainethereum",
+                "connectionName": "blockchainethereum",
+                "id": "/subscriptions/1351f53f-23e6-41d5-9615-fc64f09dc660/providers/Microsoft.Web/locations/westeurope/managedApis/blockchainethereum"
+            },
+            "cognitiveservicescomputervision": {
+                "connectionId": "/subscriptions/1351f53f-23e6-41d5-9615-fc64f09dc660/resourceGroups/hackaton19/providers/Microsoft.Web/connections/cognitiveservicescomputervision",
+                "connectionName": "cognitiveservicescomputervision",
+                "id": "/subscriptions/1351f53f-23e6-41d5-9615-fc64f09dc660/providers/Microsoft.Web/locations/westeurope/managedApis/cognitiveservicescomputervision"
+            },
+            "sharepointonline": {
+                "connectionId": "/subscriptions/1351f53f-23e6-41d5-9615-fc64f09dc660/resourceGroups/hackaton19/providers/Microsoft.Web/connections/sharepointonline",
+                "connectionName": "sharepointonline",
+                "id": "/subscriptions/1351f53f-23e6-41d5-9615-fc64f09dc660/providers/Microsoft.Web/locations/westeurope/managedApis/sharepointonline"
+            }
+        }
+    },
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "Execute_smart_contract_function_(incurring_gas_cost)": {
+                "inputs": {
+                    "body": {
+                        "documentHash": "@{body('Hash_file_content')}",
+                        "fileId": "@triggerOutputs()['headers']['x-ms-file-id']",
+                        "name": "@base64ToString(triggerOutputs()['headers']['x-ms-file-name-encoded'])",
+                        "path": "@base64ToString(triggerOutputs()['headers']['x-ms-file-path-encoded'])",
+                        "tag": "@triggerOutputs()['headers']['x-ms-file-etag']",
+                        "text": "@body('Optical_Character_Recognition_(OCR)_to_Text')?['text']"
+                    },
+                    "host": {
+                        "connection": {
+                            "name": "@parameters('$connections')['blockchainethereum_1']['connectionId']"
+                        }
+                    },
+                    "method": "post",
+                    "path": "/contract/functions/@{encodeURIComponent(encodeURIComponent('addDocument'))}/execute",
+                    "queries": {
+                        "abi": "[\n    {\n      \"constant\": true,\n      \"inputs\": [\n        {\n          \"name\": \"\",\n          \"type\": \"uint256\"\n        }\n      ],\n      \"name\": \"documents\",\n      \"outputs\": [\n        {\n          \"name\": \"Id\",\n          \"type\": \"uint256\"\n        },\n        {\n          \"name\": \"Owner\",\n          \"type\": \"address\"\n        },\n        {\n          \"name\": \"FileId\",\n          \"type\": \"string\"\n        },\n        {\n          \"name\": \"Name\",\n          \"type\": \"string\"\n        },\n        {\n          \"name\": \"Path\",\n          \"type\": \"string\"\n        },\n        {\n          \"name\": \"Tag\",\n          \"type\": \"string\"\n        },\n        {\n          \"name\": \"Text\",\n          \"type\": \"string\"\n        },\n        {\n          \"name\": \"DocumentHash\",\n          \"type\": \"bytes32\"\n        }\n      ],\n      \"payable\": false,\n      \"stateMutability\": \"view\",\n      \"type\": \"function\"\n    },\n    {\n      \"anonymous\": false,\n      \"inputs\": [\n        {\n          \"indexed\": false,\n          \"name\": \"documentId\",\n          \"type\": \"uint256\"\n        },\n        {\n          \"indexed\": false,\n          \"name\": \"owner\",\n          \"type\": \"address\"\n        },\n        {\n          \"indexed\": false,\n          \"name\": \"fileId\",\n          \"type\": \"string\"\n        },\n        {\n          \"indexed\": false,\n          \"name\": \"name\",\n          \"type\": \"string\"\n        },\n        {\n          \"indexed\": false,\n          \"name\": \"path\",\n          \"type\": \"string\"\n        },\n        {\n          \"indexed\": false,\n          \"name\": \"tag\",\n          \"type\": \"string\"\n        },\n        {\n          \"indexed\": false,\n          \"name\": \"text\",\n          \"type\": \"string\"\n        },\n        {\n          \"indexed\": false,\n          \"name\": \"documentHash\",\n          \"type\": \"bytes32\"\n        }\n      ],\n      \"name\": \"DocumentAdded\",\n      \"type\": \"event\"\n    },\n    {\n      \"constant\": false,\n      \"inputs\": [\n        {\n          \"name\": \"fileId\",\n          \"type\": \"string\"\n        },\n        {\n          \"name\": \"name\",\n          \"type\": \"string\"\n        },\n        {\n          \"name\": \"path\",\n          \"type\": \"string\"\n        },\n        {\n          \"name\": \"tag\",\n          \"type\": \"string\"\n        },\n        {\n          \"name\": \"text\",\n          \"type\": \"string\"\n        },\n        {\n          \"name\": \"documentHash\",\n          \"type\": \"bytes32\"\n        }\n      ],\n      \"name\": \"addDocument\",\n      \"outputs\": [],\n      \"payable\": false,\n      \"stateMutability\": \"nonpayable\",\n      \"type\": \"function\"\n    },\n    {\n      \"constant\": true,\n      \"inputs\": [\n        {\n          \"name\": \"documentId\",\n          \"type\": \"uint256\"\n        }\n      ],\n      \"name\": \"getText\",\n      \"outputs\": [\n        {\n          \"name\": \"\",\n          \"type\": \"string\"\n        }\n      ],\n      \"payable\": false,\n      \"stateMutability\": \"view\",\n      \"type\": \"function\"\n    },\n    {\n      \"constant\": true,\n      \"inputs\": [],\n      \"name\": \"getCount\",\n      \"outputs\": [\n        {\n          \"name\": \"\",\n          \"type\": \"uint256\"\n        }\n      ],\n      \"payable\": false,\n      \"stateMutability\": \"view\",\n      \"type\": \"function\"\n    }\n  ]",
+                        "contractAddress": "0xF12b5dd4EAD5F743C6BaA640B0216200e89B60Da"
+                    }
+                },
+                "runAfter": {
+                    "Hash_file_content": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "ApiConnection"
+            },
+            "Hash_file_content": {
+                "inputs": {
+                    "body": "@triggerBody().$content",
+                    "function": {
+                        "id": "/subscriptions/1351f53f-23e6-41d5-9615-fc64f09dc660/resourceGroups/hackaton19/providers/Microsoft.Web/sites/hackaton19/functions/HttpTrigger1"
+                    }
+                },
+                "runAfter": {
+                    "Optical_Character_Recognition_(OCR)_to_Text": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "Function"
+            },
+            "Optical_Character_Recognition_(OCR)_to_Text": {
+                "inputs": {
+                    "body": "@triggerBody()",
+                    "host": {
+                        "connection": {
+                            "name": "@parameters('$connections')['cognitiveservicescomputervision']['connectionId']"
+                        }
+                    },
+                    "method": "post",
+                    "path": "/vision/v2.0/ocrtext",
+                    "queries": {
+                        "detectOrientation": true,
+                        "format": "Image Content",
+                        "language": "unk"
+                    }
+                },
+                "runAfter": {},
+                "type": "ApiConnection"
+            }
+        },
+        "contentVersion": "1.0.0.0",
+        "outputs": {},
+        "parameters": {
+            "$connections": {
+                "defaultValue": {},
+                "type": "Object"
+            }
+        },
+        "triggers": {
+            "When_a_file_is_created_in_a_folder": {
+                "inputs": {
+                    "host": {
+                        "connection": {
+                            "name": "@parameters('$connections')['sharepointonline']['connectionId']"
+                        }
+                    },
+                    "method": "get",
+                    "path": "/datasets/@{encodeURIComponent(encodeURIComponent('https://innovateit.sharepoint.com/sites/Audit'))}/triggers/onnewfile",
+                    "queries": {
+                        "folderId": "%252fTracked%2bPictures",
+                        "inferContentType": true,
+                        "queryParametersSingleEncoded": true
+                    }
+                },
+                "metadata": {
+                    "%252fTracked%2bPictures": "/Tracked Pictures"
+                },
+                "recurrence": {
+                    "frequency": "Minute",
+                    "interval": 3
+                },
+                "type": "ApiConnection"
+            }
+        }
+    }
+}
