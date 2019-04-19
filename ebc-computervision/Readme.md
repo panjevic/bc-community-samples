@@ -140,5 +140,5 @@ To verify everything is set correctly
 
 --- 
 
-## Future mprovement
+## Future improvement
 Text and metadata should not be stored on the Blockchain as it's quite expensive. Instead, one could use Azure Storage Table to store all the data and only keep a hash and IDs on the blockchain.
