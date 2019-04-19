@@ -49,6 +49,7 @@ We will be tracking Id of the modified item, modified date, email and display na
 7. Chose **Execute smart contract function** from the list of supported actions
 
 ![Connector](./resources/logicapp02.png)
+
 8. Create a new connection to Ethereum RPC endpoint
     - Enter a connection name
     - Put a RPC endpoint eq. `http://your_ip:port`
