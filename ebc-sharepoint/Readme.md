@@ -1,4 +1,4 @@
-# Simple auditing of changes to SharePoint list items on Ethereum blockchain
+# Simple auditing of changes to SharePoint documents using Ethereum blockchain
 
 This sample is intended to display the usage of Ethereum blockchain as immutable log in auditing purposes to keep track of changes made on the document stored in SharePoint Library.
 
