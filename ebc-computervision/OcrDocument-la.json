@@ -1,9 +1,9 @@
 {
     "$connections": {
         "value": {
-            "blockchainethereum_1": {
-                "connectionId": "/subscriptions/1351f53f-23e6-41d5-9615-fc64f09dc660/resourceGroups/hackaton19/providers/Microsoft.Web/connections/blockchainethereum",
-                "connectionName": "blockchainethereum",
+            "blockchainethereum": {
+                "connectionId": "/subscriptions/1351f53f-23e6-41d5-9615-fc64f09dc660/resourceGroups/hackaton19/providers/Microsoft.Web/connections/blockchainethereum-1",
+                "connectionName": "blockchainethereum-1",
                 "id": "/subscriptions/1351f53f-23e6-41d5-9615-fc64f09dc660/providers/Microsoft.Web/locations/westeurope/managedApis/blockchainethereum"
             },
             "cognitiveservicescomputervision": {
@@ -25,22 +25,33 @@
                 "inputs": {
                     "body": {
                         "documentHash": "@{body('Hash_file_content')}",
-                        "fileId": "@triggerOutputs()['headers']['x-ms-file-id']",
-                        "name": "@base64ToString(triggerOutputs()['headers']['x-ms-file-name-encoded'])",
-                        "path": "@base64ToString(triggerOutputs()['headers']['x-ms-file-path-encoded'])",
-                        "tag": "@triggerOutputs()['headers']['x-ms-file-etag']",
-                        "text": "@body('Optical_Character_Recognition_(OCR)_to_Text')?['text']"
+                        "metadataHash": "@{body('Hash_metadata')}",
+                        "textHash": "@{body('Hash_detected_text')}"
                     },
                     "host": {
                         "connection": {
-                            "name": "@parameters('$connections')['blockchainethereum_1']['connectionId']"
+                            "name": "@parameters('$connections')['blockchainethereum']['connectionId']"
                         }
                     },
                     "method": "post",
                     "path": "/contract/functions/@{encodeURIComponent(encodeURIComponent('addDocument'))}/execute",
                     "queries": {
-                        "abi": "[\n    {\n      \"constant\": true,\n      \"inputs\": [\n        {\n          \"name\": \"\",\n          \"type\": \"uint256\"\n        }\n      ],\n      \"name\": \"documents\",\n      \"outputs\": [\n        {\n          \"name\": \"Id\",\n          \"type\": \"uint256\"\n        },\n        {\n          \"name\": \"Owner\",\n          \"type\": \"address\"\n        },\n        {\n          \"name\": \"FileId\",\n          \"type\": \"string\"\n        },\n        {\n          \"name\": \"Name\",\n          \"type\": \"string\"\n        },\n        {\n          \"name\": \"Path\",\n          \"type\": \"string\"\n        },\n        {\n          \"name\": \"Tag\",\n          \"type\": \"string\"\n        },\n        {\n          \"name\": \"Text\",\n          \"type\": \"string\"\n        },\n        {\n          \"name\": \"DocumentHash\",\n          \"type\": \"bytes32\"\n        }\n      ],\n      \"payable\": false,\n      \"stateMutability\": \"view\",\n      \"type\": \"function\"\n    },\n    {\n      \"anonymous\": false,\n      \"inputs\": [\n        {\n          \"indexed\": false,\n          \"name\": \"documentId\",\n          \"type\": \"uint256\"\n        },\n        {\n          \"indexed\": false,\n          \"name\": \"owner\",\n          \"type\": \"address\"\n        },\n        {\n          \"indexed\": false,\n          \"name\": \"fileId\",\n          \"type\": \"string\"\n        },\n        {\n          \"indexed\": false,\n          \"name\": \"name\",\n          \"type\": \"string\"\n        },\n        {\n          \"indexed\": false,\n          \"name\": \"path\",\n          \"type\": \"string\"\n        },\n        {\n          \"indexed\": false,\n          \"name\": \"tag\",\n          \"type\": \"string\"\n        },\n        {\n          \"indexed\": false,\n          \"name\": \"text\",\n          \"type\": \"string\"\n        },\n        {\n          \"indexed\": false,\n          \"name\": \"documentHash\",\n          \"type\": \"bytes32\"\n        }\n      ],\n      \"name\": \"DocumentAdded\",\n      \"type\": \"event\"\n    },\n    {\n      \"constant\": false,\n      \"inputs\": [\n        {\n          \"name\": \"fileId\",\n          \"type\": \"string\"\n        },\n        {\n          \"name\": \"name\",\n          \"type\": \"string\"\n        },\n        {\n          \"name\": \"path\",\n          \"type\": \"string\"\n        },\n        {\n          \"name\": \"tag\",\n          \"type\": \"string\"\n        },\n        {\n          \"name\": \"text\",\n          \"type\": \"string\"\n        },\n        {\n          \"name\": \"documentHash\",\n          \"type\": \"bytes32\"\n        }\n      ],\n      \"name\": \"addDocument\",\n      \"outputs\": [],\n      \"payable\": false,\n      \"stateMutability\": \"nonpayable\",\n      \"type\": \"function\"\n    },\n    {\n      \"constant\": true,\n      \"inputs\": [\n        {\n          \"name\": \"documentId\",\n          \"type\": \"uint256\"\n        }\n      ],\n      \"name\": \"getText\",\n      \"outputs\": [\n        {\n          \"name\": \"\",\n          \"type\": \"string\"\n        }\n      ],\n      \"payable\": false,\n      \"stateMutability\": \"view\",\n      \"type\": \"function\"\n    },\n    {\n      \"constant\": true,\n      \"inputs\": [],\n      \"name\": \"getCount\",\n      \"outputs\": [\n        {\n          \"name\": \"\",\n          \"type\": \"uint256\"\n        }\n      ],\n      \"payable\": false,\n      \"stateMutability\": \"view\",\n      \"type\": \"function\"\n    }\n  ]",
-                        "contractAddress": "0xF12b5dd4EAD5F743C6BaA640B0216200e89B60Da"
+                        "abi": "[\n\t{\n\t\t\"constant\": false,\n\t\t\"inputs\": [\n\t\t\t{\n\t\t\t\t\"name\": \"documentHash\",\n\t\t\t\t\"type\": \"bytes32\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"name\": \"textHash\",\n\t\t\t\t\"type\": \"bytes32\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"name\": \"metadataHash\",\n\t\t\t\t\"type\": \"bytes32\"\n\t\t\t}\n\t\t],\n\t\t\"name\": \"addDocument\",\n\t\t\"outputs\": [],\n\t\t\"payable\": false,\n\t\t\"stateMutability\": \"nonpayable\",\n\t\t\"type\": \"function\"\n\t},\n\t{\n\t\t\"anonymous\": false,\n\t\t\"inputs\": [\n\t\t\t{\n\t\t\t\t\"indexed\": false,\n\t\t\t\t\"name\": \"documentId\",\n\t\t\t\t\"type\": \"uint256\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"indexed\": false,\n\t\t\t\t\"name\": \"owner\",\n\t\t\t\t\"type\": \"address\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"indexed\": false,\n\t\t\t\t\"name\": \"documentHash\",\n\t\t\t\t\"type\": \"bytes32\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"indexed\": false,\n\t\t\t\t\"name\": \"textHash\",\n\t\t\t\t\"type\": \"bytes32\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"indexed\": false,\n\t\t\t\t\"name\": \"metadataHash\",\n\t\t\t\t\"type\": \"bytes32\"\n\t\t\t}\n\t\t],\n\t\t\"name\": \"DocumentAdded\",\n\t\t\"type\": \"event\"\n\t},\n\t{\n\t\t\"constant\": true,\n\t\t\"inputs\": [\n\t\t\t{\n\t\t\t\t\"name\": \"\",\n\t\t\t\t\"type\": \"uint256\"\n\t\t\t}\n\t\t],\n\t\t\"name\": \"documents\",\n\t\t\"outputs\": [\n\t\t\t{\n\t\t\t\t\"name\": \"Id\",\n\t\t\t\t\"type\": \"uint256\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"name\": \"Owner\",\n\t\t\t\t\"type\": \"address\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"name\": \"DocumentHash\",\n\t\t\t\t\"type\": \"bytes32\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"name\": \"TextHash\",\n\t\t\t\t\"type\": \"bytes32\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"name\": \"MetadataHash\",\n\t\t\t\t\"type\": \"bytes32\"\n\t\t\t}\n\t\t],\n\t\t\"payable\": false,\n\t\t\"stateMutability\": \"view\",\n\t\t\"type\": \"function\"\n\t},\n\t{\n\t\t\"constant\": true,\n\t\t\"inputs\": [],\n\t\t\"name\": \"getCount\",\n\t\t\"outputs\": [\n\t\t\t{\n\t\t\t\t\"name\": \"\",\n\t\t\t\t\"type\": \"uint256\"\n\t\t\t}\n\t\t],\n\t\t\"payable\": false,\n\t\t\"stateMutability\": \"view\",\n\t\t\"type\": \"function\"\n\t},\n\t{\n\t\t\"constant\": true,\n\t\t\"inputs\": [\n\t\t\t{\n\t\t\t\t\"name\": \"documentId\",\n\t\t\t\t\"type\": \"uint256\"\n\t\t\t}\n\t\t],\n\t\t\"name\": \"getDocumentHash\",\n\t\t\"outputs\": [\n\t\t\t{\n\t\t\t\t\"name\": \"\",\n\t\t\t\t\"type\": \"bytes32\"\n\t\t\t}\n\t\t],\n\t\t\"payable\": false,\n\t\t\"stateMutability\": \"view\",\n\t\t\"type\": \"function\"\n\t},\n\t{\n\t\t\"constant\": true,\n\t\t\"inputs\": [\n\t\t\t{\n\t\t\t\t\"name\": \"documentId\",\n\t\t\t\t\"type\": \"uint256\"\n\t\t\t}\n\t\t],\n\t\t\"name\": \"getMetadataHash\",\n\t\t\"outputs\": [\n\t\t\t{\n\t\t\t\t\"name\": \"\",\n\t\t\t\t\"type\": \"bytes32\"\n\t\t\t}\n\t\t],\n\t\t\"payable\": false,\n\t\t\"stateMutability\": \"view\",\n\t\t\"type\": \"function\"\n\t},\n\t{\n\t\t\"constant\": true,\n\t\t\"inputs\": [\n\t\t\t{\n\t\t\t\t\"name\": \"documentId\",\n\t\t\t\t\"type\": \"uint256\"\n\t\t\t}\n\t\t],\n\t\t\"name\": \"getTextHash\",\n\t\t\"outputs\": [\n\t\t\t{\n\t\t\t\t\"name\": \"\",\n\t\t\t\t\"type\": \"bytes32\"\n\t\t\t}\n\t\t],\n\t\t\"payable\": false,\n\t\t\"stateMutability\": \"view\",\n\t\t\"type\": \"function\"\n\t}\n]",
+                        "contractAddress": "0x99c4c534051a8ed523ada5036d942315d38e5978"
+                    }
+                },
+                "runAfter": {
+                    "Hash_metadata": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "ApiConnection"
+            },
+            "Hash_detected_text": {
+                "inputs": {
+                    "body": "@body('Optical_Character_Recognition_(OCR)_to_Text')?['text']",
+                    "function": {
+                        "id": "/subscriptions/1351f53f-23e6-41d5-9615-fc64f09dc660/resourceGroups/hackaton19/providers/Microsoft.Web/sites/hackaton19/functions/HttpTrigger1"
                     }
                 },
                 "runAfter": {
@@ -48,7 +59,7 @@
                         "Succeeded"
                     ]
                 },
-                "type": "ApiConnection"
+                "type": "Function"
             },
             "Hash_file_content": {
                 "inputs": {
@@ -59,6 +70,25 @@
                 },
                 "runAfter": {
                     "Optical_Character_Recognition_(OCR)_to_Text": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "Function"
+            },
+            "Hash_metadata": {
+                "inputs": {
+                    "body": {
+                        "id": "@triggerOutputs()['headers']['x-ms-file-id']",
+                        "name": "@triggerOutputs()['headers']['x-ms-file-name-encoded']",
+                        "path": "@triggerOutputs()['headers']['x-ms-file-path-encoded']",
+                        "tag": "@triggerOutputs()['headers']['x-ms-file-etag']"
+                    },
+                    "function": {
+                        "id": "/subscriptions/1351f53f-23e6-41d5-9615-fc64f09dc660/resourceGroups/hackaton19/providers/Microsoft.Web/sites/hackaton19/functions/HttpTrigger1"
+                    }
+                },
+                "runAfter": {
+                    "Hash_detected_text": [
                         "Succeeded"
                     ]
                 },

@@ -107,23 +107,33 @@ We will be tracking hash of the image file, image metadata (File Identified, Fil
 
 ![Create hash connector2](./resources/hashcon02.png)
 
-12. As the final step we will add the Ethereum Blockchain connector
-13. Chose **Execute smart contract function** from the list of supported actions
+12. Repeat the steps 9 & 10 to hash the text Computer Vision API detected in an image
+13. Add **Detected Text** to request body
+
+![Hash text](./resources/hashcon03.png)
+
+14. We also want to hash the image metadata. Add a new step and repeat the actions 9 & 10
+15. Request body should containt the metadata you want to track. Create a json as on shown on the image
+
+![Hash metadata](./resources/hashcon04.png)
+
+16. As the final step we will add the Ethereum Blockchain connector
+17. Chose **Execute smart contract function** from the list of supported actions
 
 ![Connector](./resources/logicapp02.png)
 
-14. Create a new connection to Ethereum RPC endpoint
+18. Create a new connection to Ethereum RPC endpoint
     - Enter a connection name
     - Put a RPC endpoint eq. `http://your_ip:port`
     - Paste a private key of the account from your Ethreum network
-15. Paste **ABI** you stored earlier
-16. Paste address contract has been deployed to
-17. Select name of the function from the dropdown eq. `addDocument`
-18. In the boxes use dynamic content to fill in the parameters
+19. Paste **ABI** you stored earlier
+20. Paste address contract has been deployed to
+21. Select name of the function from the dropdown eq. `addDocument`
+22. In the boxes use dynamic content to fill in the parameters
 
 ![Parameters](./resources/eth01.png)
 
-19. Save the logic app
+23. Save the logic app
 
 ---
 
@@ -136,9 +146,16 @@ To verify everything is set correctly
 
 2. Navigate to Logic App in the portal and click on the run history
 3. Inspect the inputs and outputs of each step
+
+![Test](./resources/test02.png)
+
 4. Copy the transaction hash from the output section and verify that it has been confirmed and the event has been raised
+
+![Test](./resources/test03.png)
+
+5. Interact with the contract by calling `getDocumentHash`, `getTextHash`  or `getMetadataHash` functions
 
 --- 
 
 ## Future improvement
-Text and metadata should not be stored on the Blockchain as it's quite expensive. Instead, one could use Azure Storage Table to store all the data and only keep a hash and IDs on the blockchain.
+This simple scenario is intended to showcase interaction with Etereheum blockchain. To make it more complete, one could use Azure Storage Table to store the detected text and all the metadata.
