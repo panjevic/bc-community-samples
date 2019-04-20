@@ -1,12 +1,12 @@
 # Simple auditing of changes to SharePoint list items on Ethereum blockchain
 
-This sample is intended to showcase the usage of Ethereum blockchain as immutable log in auditing purposes to keep track of changes made on the document stored in SharePoint Library.
+This sample is intended to display the usage of Ethereum blockchain as immutable log in auditing purposes to keep track of changes made on the document stored in SharePoint Library.
 
-We will be tracking Id of the modified item, modified date, email and display name of the user making changes and storing it on the blockchain. 
+We will be tracking ID of the modified document, file content (hashed), file metadata (hashed), whether the document has been created or changed and the timestamp(ticks) and storing it on the blockchain.
 
 ---
 
-## Prerequsits  
+## Prerequisites  
 1. Office365 developer account
 2. Azure account
 
@@ -19,7 +19,7 @@ We will be tracking Id of the modified item, modified date, email and display na
     - Otherwise, navigate to `https://your_org.sharepoint.com` as a site collection admin and Create site
     - Chose team site and add site name eq. `AuditTrace`
     - Note the URL of the team site eq. `https://your_org.sharepoint.com/sites/AuditTrace`
-    - In this sample we will be using a standard document library which is automatically created for you with the team site template
+    - In this sample, we will be using a standard document library that is automatically created for you with the team site template
 
 --- 
 
@@ -33,11 +33,11 @@ We will be tracking Id of the modified item, modified date, email and display na
 
 ![Create Function App2](./resources/functionapp02.png)
 
-3. Choose Webhook + API tile to create an function triggered on HTTP request
+3. Choose Webhook + API tile to create a function triggered on HTTP request
 
 ![Create Function App3](./resources/functionapp03.png)
 
-4. Use the code provided in `hashfunction.csx` file to create an azure function which will hash the request body
+4. Use the code provided in `hashfunction.csx` file to create an Azure Function that will hash the request body
 
 ![Create Function App4](./resources/functionapp04.png)
 
@@ -90,8 +90,8 @@ We will be tracking Id of the modified item, modified date, email and display na
 
 ![Hash text](./resources/hashcon03.png)
 
-10. We will asloe be tracking the email of the user who made the changes to the document. To store it on blockchain, we first need to hash it. Repeat the steps 5 & 6.
-12. Add **Modfied By Email** to the request body
+10. We will also be tracking the email of the user who made the changes to the document. To store it on blockchain, we first need to hash it. Repeat the steps 5 & 6.
+12. Add **Modified By Email** to the request body
 
 ![Hash metadata](./resources/hashcon04.png)
 
