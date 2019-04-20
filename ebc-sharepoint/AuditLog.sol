@@ -1,38 +1,45 @@
 pragma solidity >=0.5.0;
 
-// This simple contract is used to showcase interaction with Ethereum network and should not be used as a reference point for any smart contract implementations
 contract AuditLog {
 
-    event LogAdded(uint id, address owner, string email);
-    
+    event LogAdded(uint id, uint documentId, bytes32 documentHash, bytes32 metadataHash, bytes32 modifiedByHash, ChangeType change, int timestamp);
+
+    enum ChangeType {DEFAULT, CREATED, MODIFIED}
     
     struct LogTrace {
         uint Id;
-        uint ItemId;
-        address Owner;
-        string ModifiedDate;
-        string ModifiedBy;
-        string ModifiedByName;
+        uint DocumentId;
+        bytes32 DocumentHash;
+        bytes32 MetadataHash; 
+        bytes32 ModifiedByHash;
+        ChangeType Change;
+        int Timestamp;
     }
 
     mapping(uint => LogTrace) public logs;
+    mapping(uint => bool) public documents;
     uint logCount;
 
-    function addLog(uint itemId, string memory date, string memory email, string memory name) public {
+    function addLog(uint documentId, bytes32 documentHash, bytes32 metadataHash, bytes32 modifiedByHash, int timestamp) public {
+        
         logCount++;
-
         LogTrace memory log = LogTrace({
             Id : logCount,
-            ItemId : itemId,
-            Owner : msg.sender,
-            ModifiedDate : date,
-            ModifiedBy : email,
-            ModifiedByName : name
+            DocumentId : documentId,
+            DocumentHash : documentHash,
+            MetadataHash : metadataHash,
+            ModifiedByHash : modifiedByHash,
+            Change : documents[documentId] ? ChangeType.MODIFIED : ChangeType.CREATED,
+            Timestamp : timestamp
         });
         
-        logs[logCount] = log;        
+        logs[logCount] = log;
+
+        if (log.Change == ChangeType.CREATED){
+            documents[documentId] = true;
+        }
         
-        emit LogAdded(logCount, msg.sender, email);
+        emit LogAdded(logCount, documentId, documentHash, metadataHash, modifiedByHash, log.Change, timestamp);
     }
     
     function getCount() public view returns (uint) {

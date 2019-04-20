@@ -1,27 +1,48 @@
 # Simple auditing of changes to SharePoint list items on Ethereum blockchain
 
-This sample is intended to showcase the usage of Ethereum blockchain as immutable log in auditing purposes to keep track of changes made on the SharePoint list.
+This sample is intended to showcase the usage of Ethereum blockchain as immutable log in auditing purposes to keep track of changes made on the document stored in SharePoint Library.
+
 We will be tracking Id of the modified item, modified date, email and display name of the user making changes and storing it on the blockchain. 
 
 ---
-## Requirements 
+
+## Prerequsits  
 1. Office365 developer account
 2. Azure account
 
-## SharePoint list
+--- 
 
-1. SharePoint site
+## SharePoint Document Library
+
+1. SharePoint document library
     - In case you already have a SharePoint site set-up, note the site URL.
     - Otherwise, navigate to `https://your_org.sharepoint.com` as a site collection admin and Create site
     - Chose team site and add site name eq. `AuditTrace`
-    - Copy the URL of the team site eq. `https://your_org.sharepoint.com/sites/AuditTrace`
+    - Note the URL of the team site eq. `https://your_org.sharepoint.com/sites/AuditTrace`
+    - In this sample we will be using a standard document library which is automatically created for you with the team site template
 
-2. Create a list
-    - Navigate to Setting and choose Add an app
-    - Select Custom list template and add a name eq. `Suggestions`
-    - Add additional columns you want your list to have
+--- 
 
----
+## Azure Function for hashing
+
+1. Create a Function App from Azure Marketplace on Azure Portal
+
+![Create Function App](./resources/functionapp01.png)
+
+2. Add new function and select In-portal tile on the Quick start
+
+![Create Function App2](./resources/functionapp02.png)
+
+3. Choose Webhook + API tile to create an function triggered on HTTP request
+
+![Create Function App3](./resources/functionapp03.png)
+
+4. Use the code provided in `hashfunction.csx` file to create an azure function which will hash the request body
+
+![Create Function App4](./resources/functionapp04.png)
+
+--- 
+
 
 ## Smart Contract
 
@@ -40,15 +61,44 @@ We will be tracking Id of the modified item, modified date, email and display na
 1. Create a new **Logic App** in Azure Portal and use Blank Logic App template
     
     ![Create a Logic App](./resources/logicapp01.png)
-2. Search for SharePoint connector
-2. Choose **When an item is created or modified** trigger
-3. Paste SharePoint site URL eq. `https://your_org.sharepoint.com/sites/AuditTrace`
-4. Select List name from the dropdown eq. `Suggestions`
-5. Add a new step
-6. Select Ethereum Blockchain connector
-7. Chose **Execute smart contract function** from the list of supported actions
 
-![Connector](./resources/logicapp02.png)
+2. Search for SharePoint connector
+2. Choose **When a file is created or modified** trigger
+3. Select SharePoint site from the dropdown or paste site URL eq. `https://your_org.sharepoint.com/sites/Audit`
+4. Select Library name from the dropdown eq. `Documents`
+
+![Create SP Connector](./resources/spcon01.png)
+
+5. Add SharePoint connector one more time as we need to get the file content
+6. Select **Get File Content** action 
+7. Choose your site address
+8. Select **Identifier** from Dynamic content panel for the File Identifier parameter
+
+![Create Get file content Connector](./resources/spcon02.png)
+
+5. Add **Azure Function** connector
+6. Select the hash function you created
+
+![Create hash connector](./resources/hashcon01.png)
+
+7. The purpose of this step is to create a hash of the file content, and that is the reason why place in the request body the following expression `body().$content`. Body returns also the content type, so we are taking only the content piece.
+
+![Create hash connector2](./resources/hashcon02.png)
+
+8. Repeat the steps 5 & 6 to hash the file metadata
+9. Request body should contain the metadata you want to track. Create a json as on shown on the image
+
+![Hash text](./resources/hashcon03.png)
+
+10. We will asloe be tracking the email of the user who made the changes to the document. To store it on blockchain, we first need to hash it. Repeat the steps 5 & 6.
+12. Add **Modfied By Email** to the request body
+
+![Hash metadata](./resources/hashcon04.png)
+
+12. Finally, add a step for Ethereum Blockchain connector
+13. Choose **Execute smart contract function** from the list of supported actions
+
+![Connector](./resources/bccon01.png)
 
 8. Create a new connection to Ethereum RPC endpoint
     - Enter a connection name
@@ -58,34 +108,27 @@ We will be tracking Id of the modified item, modified date, email and display na
 10. Paste address contract has been deployed to
 11. Select name of the function from the dropdown eq. `addLog`
 12. In the boxes use dynamic content to fill in the parameters
+- Select **ID** for **documentId** parameter
+- **documentHash** parameter should contain the output(body) of the **Hash File Content** step
+- **metadataHash** parameter should contain the output(body) of the **Hash File Metadata** step
+- **documentHash** parameter should contain the output(body) of the **Hash Modified By Email** step
+- For the **timestamp** parameter, which is represented as int in the Smart Contract we will use the `ticks(triggerBody()?['Modified'])`
 
-![Parameters](./resources/logicapp03.png)
+
+![Parameters](./resources/bccon02.png)
+13. Save and run the logic app
 
 ---
 
 ## Verify
-To verify everything is set correctly
-1. Navigate to SharePoint list and add a new item or modify an existing one
+To verify everything is working correctly
+1. Navigate to SharePoint document library and create/upload new file or modify an existing one
 2. Navigate to Logic App in the portal and click on the run history
 3. Inspect the inputs and outputs of each step
+
+![Test1](./resources/test01.png)
+![Test2](./resources/test02.png)
+
 4. Copy the transaction hash from the output section and verify that it has been confirmed and the event has been raised
-
-![Run history](./resources/runhistory.png)
-
-
-### Bonus - Log events in Azure Table Storage for easy access
-Additionally, for easy access you create a Logic App which will listen for events raised on smart contracts and store the output in a Table storage.
-1. Create a new logic app (from black template)
-2. Select a Blockchain Connector
-3. Use the existing connection string from previus steps
-3. Select trigger *When a smart contract event occurs*
-4. Add new step with *Azure Table Storage connector*
-5. Select *Insert Entity* action
-6. Choose a Storage table from the dropdown
-7. Create an entity with a JSON as on the image
-
-![Log Events](./resources/events.png)
-
-
 
 
