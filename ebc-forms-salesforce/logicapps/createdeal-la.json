@@ -1,0 +1,93 @@
+{
+    "$connections": {
+        "value": {
+            "microsoftforms": {
+                "connectionId": "/subscriptions/1351f53f-23e6-41d5-9615-fc64f09dc660/resourceGroups/hackaton19/providers/Microsoft.Web/connections/microsoftforms",
+                "connectionName": "microsoftforms",
+                "id": "/subscriptions/1351f53f-23e6-41d5-9615-fc64f09dc660/providers/Microsoft.Web/locations/westeurope/managedApis/microsoftforms"
+            },
+            "salesforce": {
+                "connectionId": "/subscriptions/1351f53f-23e6-41d5-9615-fc64f09dc660/resourceGroups/hackaton19/providers/Microsoft.Web/connections/salesforce-1",
+                "connectionName": "salesforce-1",
+                "id": "/subscriptions/1351f53f-23e6-41d5-9615-fc64f09dc660/providers/Microsoft.Web/locations/westeurope/managedApis/salesforce"
+            }
+        }
+    },
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "For_each": {
+                "actions": {
+                    "Create_record": {
+                        "inputs": {
+                            "body": {
+                                "CloseDate": "@body('Get_response_details')?['r12f56b9e994c479c9223fe6bf9433005']",
+                                "Discount_Percent__c": "@body('Get_response_details')?['re800bb3e93b247d283a12c9f309ac017']",
+                                "Name": "@body('Get_response_details')?['ra59e102e1a7c496f8c2e39fb74d15199']",
+                                "StageName": "Prospecting"
+                            },
+                            "host": {
+                                "connection": {
+                                    "name": "@parameters('$connections')['salesforce']['connectionId']"
+                                }
+                            },
+                            "method": "post",
+                            "path": "/v2/datasets/default/tables/@{encodeURIComponent(encodeURIComponent('Opportunity'))}/items"
+                        },
+                        "runAfter": {
+                            "Get_response_details": [
+                                "Succeeded"
+                            ]
+                        },
+                        "type": "ApiConnection"
+                    },
+                    "Get_response_details": {
+                        "inputs": {
+                            "host": {
+                                "connection": {
+                                    "name": "@parameters('$connections')['microsoftforms']['connectionId']"
+                                }
+                            },
+                            "method": "get",
+                            "path": "/formapi/api/forms('@{encodeURIComponent('LKtUoszetEi7u0Gj14MFu4k0f71m5RhMrDXVzbOrZBJUQVRCSlNJQ1RCSEVEMDk1MDUwQlo3T1NEUC4u')}')/responses",
+                            "queries": {
+                                "response_id": "@items('For_each')?['resourceData']?['responseId']"
+                            }
+                        },
+                        "runAfter": {},
+                        "type": "ApiConnection"
+                    }
+                },
+                "foreach": "@triggerBody()?['value']",
+                "runAfter": {},
+                "type": "Foreach"
+            }
+        },
+        "contentVersion": "1.0.0.0",
+        "outputs": {},
+        "parameters": {
+            "$connections": {
+                "defaultValue": {},
+                "type": "Object"
+            }
+        },
+        "triggers": {
+            "When_a_new_response_is_submitted": {
+                "inputs": {
+                    "body": {
+                        "eventType": "responseAdded",
+                        "notificationUrl": "@{listCallbackUrl()}",
+                        "source": "ms-connector"
+                    },
+                    "host": {
+                        "connection": {
+                            "name": "@parameters('$connections')['microsoftforms']['connectionId']"
+                        }
+                    },
+                    "path": "/formapi/api/forms/@{encodeURIComponent('LKtUoszetEi7u0Gj14MFu4k0f71m5RhMrDXVzbOrZBJUQVRCSlNJQ1RCSEVEMDk1MDUwQlo3T1NEUC4u')}/webhooks"
+                },
+                "type": "ApiConnectionWebhook"
+            }
+        }
+    }
+}
