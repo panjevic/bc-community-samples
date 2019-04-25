@@ -36,9 +36,15 @@ Sales reps can use Microsoft Forms to create a new discounted deal in Salesforce
 
 In case you are new to Salesforce, use this [this step-by-step guide](https://trailhead.salesforce.com/en/content/learn/modules/business_process_automation/approvals) to complete all those steps.
 
-*Note*: Make sure you set up a default approver
+***Note***: 
+1. Make sure you set up a default approver
 
 ![Set approver](./resources/salesforce-setapprover.png)
+
+2. Make sure you set up a default value for the Discounted Percent Status field eq. `New`
+
+![Set default value](./resources/salesforce-setdefaultvalue.png)
+
 
 --- 
 
