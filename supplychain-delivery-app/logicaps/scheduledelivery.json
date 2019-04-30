@@ -1,0 +1,100 @@
+{
+    "$connections": {
+        "value": {
+            "azuretables": {
+                "connectionId": "/subscriptions/1351f53f-23e6-41d5-9615-fc64f09dc660/resourceGroups/attested-delivery/providers/Microsoft.Web/connections/azuretables",
+                "connectionName": "azuretables",
+                "id": "/subscriptions/1351f53f-23e6-41d5-9615-fc64f09dc660/providers/Microsoft.Web/locations/westeurope/managedApis/azuretables"
+            },
+            "microsoftforms": {
+                "connectionId": "/subscriptions/1351f53f-23e6-41d5-9615-fc64f09dc660/resourceGroups/attested-delivery/providers/Microsoft.Web/connections/microsoftforms",
+                "connectionName": "microsoftforms",
+                "id": "/subscriptions/1351f53f-23e6-41d5-9615-fc64f09dc660/providers/Microsoft.Web/locations/westeurope/managedApis/microsoftforms"
+            }
+        }
+    },
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "For_each": {
+                "actions": {
+                    "Get_response_details": {
+                        "inputs": {
+                            "host": {
+                                "connection": {
+                                    "name": "@parameters('$connections')['microsoftforms']['connectionId']"
+                                }
+                            },
+                            "method": "get",
+                            "path": "/formapi/api/forms('@{encodeURIComponent('LKtUoszetEi7u0Gj14MFu4k0f71m5RhMrDXVzbOrZBJUNzhZTllEWkhOOTFYSU1HNzRFQTdQQjE3Ni4u')}')/responses",
+                            "queries": {
+                                "response_id": "@items('For_each')?['resourceData']?['responseId']"
+                            }
+                        },
+                        "runAfter": {},
+                        "type": "ApiConnection"
+                    },
+                    "Insert_Entity": {
+                        "inputs": {
+                            "body": {
+                                "Address": "@body('Get_response_details')?['rd01dca948c5d41f4985a10c766087a40']",
+                                "City": "@body('Get_response_details')?['r1115cd87826543329f5c5dd53a34419b']",
+                                "DeliveryStatus": 1,
+                                "Name": "@body('Get_response_details')?['rb04b52ae25fd4f63befb24003a453eee']",
+                                "PartitionKey": "@body('Get_response_details')?['r3f655498f47c49f794a1c24608325ee5']",
+                                "Phone": "@body('Get_response_details')?['rc7035e94e0bf4b2c99fdcc3542451376']",
+                                "RowKey": "@body('Get_response_details')?['ra59f305aee7f44c7a8962febf3af33bf']",
+                                "State": "@body('Get_response_details')?['ra1e97deca1be4a62bc3b69ecafcf8036']",
+                                "Timeslot": "@body('Get_response_details')?['rc6b85ae0e4c54f8d96c6711fecedcbeb']",
+                                "TruckId": "@body('Get_response_details')?['r6208e934ef4d4b9fb07f4780a8199fe6']",
+                                "Zipcode": "@body('Get_response_details')?['r92271d532bd448669317df6456c66764']"
+                            },
+                            "host": {
+                                "connection": {
+                                    "name": "@parameters('$connections')['azuretables']['connectionId']"
+                                }
+                            },
+                            "method": "post",
+                            "path": "/Tables/@{encodeURIComponent('ScheduledDeliveries')}/entities"
+                        },
+                        "runAfter": {
+                            "Get_response_details": [
+                                "Succeeded"
+                            ]
+                        },
+                        "type": "ApiConnection"
+                    }
+                },
+                "foreach": "@triggerBody()?['value']",
+                "runAfter": {},
+                "type": "Foreach"
+            }
+        },
+        "contentVersion": "1.0.0.0",
+        "outputs": {},
+        "parameters": {
+            "$connections": {
+                "defaultValue": {},
+                "type": "Object"
+            }
+        },
+        "triggers": {
+            "When_a_new_response_is_submitted": {
+                "inputs": {
+                    "body": {
+                        "eventType": "responseAdded",
+                        "notificationUrl": "@{listCallbackUrl()}",
+                        "source": "ms-connector"
+                    },
+                    "host": {
+                        "connection": {
+                            "name": "@parameters('$connections')['microsoftforms']['connectionId']"
+                        }
+                    },
+                    "path": "/formapi/api/forms/@{encodeURIComponent('LKtUoszetEi7u0Gj14MFu4k0f71m5RhMrDXVzbOrZBJUNzhZTllEWkhOOTFYSU1HNzRFQTdQQjE3Ni4u')}/webhooks"
+                },
+                "type": "ApiConnectionWebhook"
+            }
+        }
+    }
+}

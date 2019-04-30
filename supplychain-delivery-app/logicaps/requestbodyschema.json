@@ -1,0 +1,53 @@
+{
+    "properties": {
+        "Address": {
+            "type": "string"
+        },
+        "Barcode": {
+            "type": "string"
+        },
+        "City": {
+            "type": "string"
+        },
+        "Date": {
+            "type": "string"
+        },
+        "DeliveryId": {
+            "type": "integer"
+        },
+        "DeliveryStatus": {
+            "type": "integer"
+        },
+        "Latitude": {
+            "type": "number"
+        },
+        "Longitude": {
+            "type": "number"
+        },
+        "Name": {
+            "type": "string"
+        },
+        "Phone": {
+            "type": "string"
+        },
+        "PhotoUri": {
+            "type": "string"
+        },
+        "SignatureUri": {
+            "type": "string"
+        },
+        "State": {
+            "type": "string"
+        },
+        "Timeslot": {
+            "type": "string"
+        },
+        "TruckId": {
+            "type": "string"
+        },
+        "Zipcode": {
+            "type": "string"
+        }
+    },
+    "type": "object"
+}

@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:DeliveryApp"
+             x:Class="DeliveryApp.DeliveryPageDetail"
+             Title="Detail">
+    <ContentPage.Resources>
+        <local:NegateBooleanConverter x:Key="inverter"/>
+    </ContentPage.Resources>
+
+    <StackLayout Padding="10">
+        <ActivityIndicator x:Name="uploadIndicator" IsVisible="{Binding IsBusy}" IsRunning="{Binding IsBusy}" />
+
+        <StackLayout IsVisible="{Binding ShowDetails, Converter={StaticResource inverter}}">
+            <Label Text="Select a delivery first!" 
+                   HorizontalOptions="Center"
+                   VerticalOptions="CenterAndExpand" />
+        </StackLayout>
+
+        <StackLayout IsVisible="{Binding ShowDetails}">
+            <StackLayout Orientation="Vertical">
+                <Label Text="{Binding SelectedDelivery.Name}"/>
+                <Label Text="{Binding SelectedDelivery.Address}"/>
+                <Label Text="{Binding SelectedDelivery.City}"/>
+                <Label Text="{Binding SelectedDelivery.State}"/>
+                <Label Text="{Binding SelectedDelivery.Zipcode}"/>
+                <Label Text="{Binding SelectedDelivery.Phone}"/>
+                <Button Text="Navigate" Command="{Binding NavigateCommand}" />
+                <Button Text="Notify" Command="{Binding NotifyCommand}" />
+            </StackLayout>
+
+            <StackLayout Orientation="Horizontal">
+                <Label Text="GPS Location" />
+                <Label Text="{Binding Latitude}" />
+                <Label Text="{Binding Longitude}" />
+                <Button Text="Locate" Command="{Binding LocateCommand}" />
+            </StackLayout>
+            <StackLayout Orientation="Horizontal">
+                <Label Text="{Binding Barcode, StringFormat='Barcode: {0}'}" />
+                <Button Text="Scan" Clicked="OnScanClicked" />
+            </StackLayout>
+
+            <Button Text="Take a photo" Command="{Binding AcquireCommand}" />
+            <!--<Image x:Name="imageView" HeightRequest="300" WidthRequest="400" />-->
+            <Button Text="Sign" Clicked="OnSignClicked" />
+            <Button Text="Complete" Command="{Binding UploadCommand}" />
+            <Label Text="{Binding Status}"/>
+        </StackLayout>
+    </StackLayout>
+</ContentPage>
