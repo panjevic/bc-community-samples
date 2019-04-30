@@ -280,6 +280,9 @@ To verify everything is working correctly
 
 4. Open the mobile app and select the scheduled delivery from the list
 5. Notify the customer that the delivery its on its way by sending a text message
+
+![Notify](./resources/test-sms.png)
+
 6. Navigate opens the maps with directions to the delivery address
 7. To confirm the delivery
 - Get the current GPS coordinates
@@ -288,7 +291,7 @@ To verify everything is working correctly
 - Sign the delivery
 - Once you are done with collecting all necessary data, click Complete
 
-![Complete](./resources/test_mobile.png)
+![Complete](./resources/test-mobile.png)
 
 7. Move back to Azure portal and open the StoreLog Logic App
 8. Inspect the run history and review the steps
