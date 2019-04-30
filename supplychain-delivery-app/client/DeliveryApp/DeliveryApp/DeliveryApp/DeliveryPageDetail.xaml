@@ -7,44 +7,78 @@
     <ContentPage.Resources>
         <local:NegateBooleanConverter x:Key="inverter"/>
     </ContentPage.Resources>
+    <ScrollView>
+        <StackLayout Padding="10">
+            <ActivityIndicator x:Name="uploadIndicator" IsVisible="{Binding IsBusy}" IsRunning="{Binding IsBusy}" />
 
-    <StackLayout Padding="10">
-        <ActivityIndicator x:Name="uploadIndicator" IsVisible="{Binding IsBusy}" IsRunning="{Binding IsBusy}" />
+            <StackLayout IsVisible="{Binding ShowDetails, Converter={StaticResource inverter}}">
+                <Label Text="Select a delivery first!" 
+                   HorizontalOptions="Center" VerticalOptions="CenterAndExpand" />
+            </StackLayout>
 
-        <StackLayout IsVisible="{Binding ShowDetails, Converter={StaticResource inverter}}">
-            <Label Text="Select a delivery first!" 
-                   HorizontalOptions="Center"
-                   VerticalOptions="CenterAndExpand" />
+            <StackLayout IsVisible="{Binding ShowDetails}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="80"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <StackLayout Orientation="Vertical" Grid.Column="0" Grid.Row="0">
+                        <Label Text="{Binding SelectedDelivery.Name}" FontAttributes="Bold"/>
+                        <Label Text="{Binding SelectedDelivery.Address}"/>
+                        <StackLayout Orientation="Horizontal">
+                            <Label Text="{Binding SelectedDelivery.City, StringFormat='{0},'}"/>
+                            <Label Text="{Binding SelectedDelivery.State}"/>
+                            <Label Text="{Binding SelectedDelivery.Zipcode}"/>
+                        </StackLayout>
+                    </StackLayout>
+
+                    <StackLayout Grid.Column="1" Grid.Row="0" VerticalOptions="Center" >
+                        <ImageButton Command="{Binding NavigateCommand}"
+                                     Source="ic_maps.png" BackgroundColor="Transparent"/>
+                    </StackLayout>
+                    <Label Grid.Column="0" Grid.Row="1" 
+                           Text="{Binding SelectedDelivery.Phone, StringFormat='Phone {0}'}"
+                           HorizontalOptions="Start" VerticalOptions="CenterAndExpand" />
+                    <ImageButton Grid.Column="1" Grid.Row="1" 
+                                      Command="{Binding NotifyCommand}" 
+                                      Source="ic_sms.png" BackgroundColor="Transparent" />
+
+                    <StackLayout Orientation="Vertical" Grid.Row="2" Grid.Column="0">
+                        <Label Text="Location" FontAttributes="Bold" />
+                        <Label Text="{Binding Latitude, StringFormat='Lat:  {0:F4}'}" />
+                        <Label Text="{Binding Longitude, StringFormat='Long: {0:F4}'}" />
+                    </StackLayout>
+                    <StackLayout Grid.Row="2" Grid.Column="1" VerticalOptions="Center" >
+                        <ImageButton Command="{Binding LocateCommand}"
+                                     Source="ic_location.png" BackgroundColor="Transparent"/>
+                    </StackLayout>
+
+                    <StackLayout Orientation="Vertical" Grid.Row="3" Grid.Column="0">
+                        <Label Text="Barcode" FontAttributes="Bold" />
+                        <Label Text="{Binding Barcode}" />
+                    </StackLayout>
+                    <StackLayout Grid.Row="3" Grid.Column="1" VerticalOptions="Center" BackgroundColor="Black">
+                        <Button Text="Scan" Clicked="OnScanClicked" BackgroundColor="#33b5e5" TextColor="White" />
+                    </StackLayout>
+
+                    <StackLayout Grid.Row="4" Grid.ColumnSpan="2" VerticalOptions="Center" >
+                        <ImageButton Command="{Binding AcquireCommand}"
+                                     Source="ic_camera.png" BackgroundColor="Transparent"/>
+                    </StackLayout>
+                    <Button Text="Sign" Clicked="OnSignClicked" Grid.Row="5" Grid.ColumnSpan="2" BackgroundColor="#33b5e5" TextColor="White"/>
+                    <Button Text="Complete" Command="{Binding UploadCommand}" Grid.Row="6" Grid.ColumnSpan="2" BackgroundColor="#33b5e5" TextColor="White" />
+                </Grid>
+                <Label Text="{Binding Status}"/>
+            </StackLayout>
         </StackLayout>
-
-        <StackLayout IsVisible="{Binding ShowDetails}">
-            <StackLayout Orientation="Vertical">
-                <Label Text="{Binding SelectedDelivery.Name}"/>
-                <Label Text="{Binding SelectedDelivery.Address}"/>
-                <Label Text="{Binding SelectedDelivery.City}"/>
-                <Label Text="{Binding SelectedDelivery.State}"/>
-                <Label Text="{Binding SelectedDelivery.Zipcode}"/>
-                <Label Text="{Binding SelectedDelivery.Phone}"/>
-                <Button Text="Navigate" Command="{Binding NavigateCommand}" />
-                <Button Text="Notify" Command="{Binding NotifyCommand}" />
-            </StackLayout>
-
-            <StackLayout Orientation="Horizontal">
-                <Label Text="GPS Location" />
-                <Label Text="{Binding Latitude}" />
-                <Label Text="{Binding Longitude}" />
-                <Button Text="Locate" Command="{Binding LocateCommand}" />
-            </StackLayout>
-            <StackLayout Orientation="Horizontal">
-                <Label Text="{Binding Barcode, StringFormat='Barcode: {0}'}" />
-                <Button Text="Scan" Clicked="OnScanClicked" />
-            </StackLayout>
-
-            <Button Text="Take a photo" Command="{Binding AcquireCommand}" />
-            <!--<Image x:Name="imageView" HeightRequest="300" WidthRequest="400" />-->
-            <Button Text="Sign" Clicked="OnSignClicked" />
-            <Button Text="Complete" Command="{Binding UploadCommand}" />
-            <Label Text="{Binding Status}"/>
-        </StackLayout>
-    </StackLayout>
+    </ScrollView>
 </ContentPage>

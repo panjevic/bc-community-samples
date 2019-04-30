@@ -18,7 +18,7 @@ namespace DeliveryApp.ViewModel
         {
             this.entry = entry;
             this.Id = entry.DeliveryId;
-            this.Title = entry.DeliveryId.ToString();
+            this.Title = $"Delivery# {entry.DeliveryId}";
             this.Address = $"{entry.Address} {entry.City} {entry.State} {entry.Zipcode}";
             this.Timeslot = entry.Timeslot;
         }

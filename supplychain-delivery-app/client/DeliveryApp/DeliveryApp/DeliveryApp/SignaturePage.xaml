@@ -9,9 +9,9 @@
                 x:Name="signatureView"
                 StrokeWidth="3"
                 StrokeColor="Black"
-                BackgroundColor="AntiqueWhite" 
-                HorizontalOptions="CenterAndExpand"
-                VerticalOptions="CenterAndExpand"/>
+                BackgroundColor="White" 
+                HorizontalOptions="FillAndExpand"
+                VerticalOptions="FillAndExpand"/>
             <Button Text="Sign" Clicked="Button_OnClicked"/>
         </StackLayout>
     </ContentPage.Content>
