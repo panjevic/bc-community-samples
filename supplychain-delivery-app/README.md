@@ -279,6 +279,11 @@ To verify everything is working correctly
 ![Create](./resources/test-func.png)
 
 4. Open the mobile app and select the scheduled delivery from the list
+
+![List](./resources/test-list.png)
+
+**NOTE** You can change TruckId and Date on the Settings page on the bottom of the list
+
 5. Notify the customer that the delivery its on its way by sending a text message
 
 ![Notify](./resources/test-sms.png)
