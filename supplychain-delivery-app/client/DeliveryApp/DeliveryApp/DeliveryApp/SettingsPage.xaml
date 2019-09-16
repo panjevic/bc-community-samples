@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="DeliveryApp.SettingsPage">
+    <ContentPage.Content>
+        <StackLayout VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
+            <StackLayout Orientation="Horizontal">
+                <Label Text="TruckId" VerticalOptions="CenterAndExpand" />
+                <Entry x:Name="truckIdEntry" Keyboard="Numeric" WidthRequest="100"/>
+            </StackLayout>
+            <StackLayout Orientation="Horizontal">
+                <Label Text="Date" VerticalOptions="CenterAndExpand"  />
+                <DatePicker x:Name="datePicker"/>
+            </StackLayout>
+            <Button Text="Save" Clicked="Button_OnClicked" />
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

@@ -1,0 +1,291 @@
+{
+    "$connections": {
+        "value": {
+            "azureblob": {
+                "connectionId": "/subscriptions/1351f53f-23e6-41d5-9615-fc64f09dc660/resourceGroups/attested-delivery/providers/Microsoft.Web/connections/azureblob",
+                "connectionName": "azureblob",
+                "id": "/subscriptions/1351f53f-23e6-41d5-9615-fc64f09dc660/providers/Microsoft.Web/locations/westeurope/managedApis/azureblob"
+            },
+            "azuretables": {
+                "connectionId": "/subscriptions/1351f53f-23e6-41d5-9615-fc64f09dc660/resourceGroups/attested-delivery/providers/Microsoft.Web/connections/azuretables",
+                "connectionName": "azuretables",
+                "id": "/subscriptions/1351f53f-23e6-41d5-9615-fc64f09dc660/providers/Microsoft.Web/locations/westeurope/managedApis/azuretables"
+            },
+            "blockchainethereum_1": {
+                "connectionId": "/subscriptions/1351f53f-23e6-41d5-9615-fc64f09dc660/resourceGroups/attested-delivery/providers/Microsoft.Web/connections/blockchainethereum-1",
+                "connectionName": "blockchainethereum-1",
+                "id": "/subscriptions/1351f53f-23e6-41d5-9615-fc64f09dc660/providers/Microsoft.Web/locations/westeurope/managedApis/blockchainethereum"
+            }
+        }
+    },
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "Delete_Entity": {
+                "inputs": {
+                    "host": {
+                        "connection": {
+                            "name": "@parameters('$connections')['azuretables']['connectionId']"
+                        }
+                    },
+                    "method": "delete",
+                    "path": "/Tables/@{encodeURIComponent('ScheduledDeliveries')}/entities/etag(PartitionKey='@{encodeURIComponent(triggerBody()?['Date'])}',RowKey='@{encodeURIComponent(variables('DeliveryId'))}')"
+                },
+                "runAfter": {
+                    "Execute_smart_contract_function_(incurring_gas_cost)": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "ApiConnection"
+            },
+            "Execute_smart_contract_function_(incurring_gas_cost)": {
+                "inputs": {
+                    "body": {
+                        "date": "@triggerBody()?['Date']",
+                        "deliveryId": "@variables('DeliveryId')",
+                        "detailsHash": "@{body('Hash_delivery_details')}",
+                        "photoHash": "@{body('Hash_photo')}",
+                        "signatureHash": "@{body('Hash_signature')}"
+                    },
+                    "host": {
+                        "connection": {
+                            "name": "@parameters('$connections')['blockchainethereum_1']['connectionId']"
+                        }
+                    },
+                    "method": "post",
+                    "path": "/contract/functions/@{encodeURIComponent(encodeURIComponent('addLog'))}/execute",
+                    "queries": {
+                        "abi": "[\n\t{\n\t\t\"constant\": false,\n\t\t\"inputs\": [\n\t\t\t{\n\t\t\t\t\"name\": \"deliveryId\",\n\t\t\t\t\"type\": \"uint256\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"name\": \"photoHash\",\n\t\t\t\t\"type\": \"bytes32\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"name\": \"detailsHash\",\n\t\t\t\t\"type\": \"bytes32\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"name\": \"signatureHash\",\n\t\t\t\t\"type\": \"bytes32\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"name\": \"date\",\n\t\t\t\t\"type\": \"string\"\n\t\t\t}\n\t\t],\n\t\t\"name\": \"addLog\",\n\t\t\"outputs\": [],\n\t\t\"payable\": false,\n\t\t\"stateMutability\": \"nonpayable\",\n\t\t\"type\": \"function\"\n\t},\n\t{\n\t\t\"constant\": true,\n\t\t\"inputs\": [],\n\t\t\"name\": \"getCount\",\n\t\t\"outputs\": [\n\t\t\t{\n\t\t\t\t\"name\": \"\",\n\t\t\t\t\"type\": \"uint256\"\n\t\t\t}\n\t\t],\n\t\t\"payable\": false,\n\t\t\"stateMutability\": \"view\",\n\t\t\"type\": \"function\"\n\t},\n\t{\n\t\t\"constant\": true,\n\t\t\"inputs\": [\n\t\t\t{\n\t\t\t\t\"name\": \"\",\n\t\t\t\t\"type\": \"uint256\"\n\t\t\t}\n\t\t],\n\t\t\"name\": \"DeliveryLogs\",\n\t\t\"outputs\": [\n\t\t\t{\n\t\t\t\t\"name\": \"DeliveryId\",\n\t\t\t\t\"type\": \"uint256\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"name\": \"PhotoHash\",\n\t\t\t\t\"type\": \"bytes32\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"name\": \"DetailsHash\",\n\t\t\t\t\"type\": \"bytes32\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"name\": \"SignatureHash\",\n\t\t\t\t\"type\": \"bytes32\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"name\": \"Date\",\n\t\t\t\t\"type\": \"string\"\n\t\t\t}\n\t\t],\n\t\t\"payable\": false,\n\t\t\"stateMutability\": \"view\",\n\t\t\"type\": \"function\"\n\t},\n\t{\n\t\t\"anonymous\": false,\n\t\t\"inputs\": [\n\t\t\t{\n\t\t\t\t\"indexed\": false,\n\t\t\t\t\"name\": \"deliveryId\",\n\t\t\t\t\"type\": \"uint256\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"indexed\": false,\n\t\t\t\t\"name\": \"photoHash\",\n\t\t\t\t\"type\": \"bytes32\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"indexed\": false,\n\t\t\t\t\"name\": \"detailsHash\",\n\t\t\t\t\"type\": \"bytes32\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"indexed\": false,\n\t\t\t\t\"name\": \"signatureHash\",\n\t\t\t\t\"type\": \"bytes32\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"indexed\": false,\n\t\t\t\t\"name\": \"date\",\n\t\t\t\t\"type\": \"string\"\n\t\t\t}\n\t\t],\n\t\t\"name\": \"DeliveryLogAdded\",\n\t\t\"type\": \"event\"\n\t}\n]",
+                        "contractAddress": "0x093aa1a8f0989daee58b612f63fb1a58462b2730"
+                    }
+                },
+                "runAfter": {
+                    "Hash_delivery_details": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "ApiConnection"
+            },
+            "Get_photo": {
+                "inputs": {
+                    "host": {
+                        "connection": {
+                            "name": "@parameters('$connections')['azureblob']['connectionId']"
+                        }
+                    },
+                    "method": "get",
+                    "path": "/datasets/default/GetFileContentByPath",
+                    "queries": {
+                        "inferContentType": true,
+                        "path": "@triggerBody()?['PhotoUri']",
+                        "queryParametersSingleEncoded": true
+                    }
+                },
+                "runAfter": {
+                    "Insert_or_Replace_Entity": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "ApiConnection"
+            },
+            "Get_signature": {
+                "inputs": {
+                    "host": {
+                        "connection": {
+                            "name": "@parameters('$connections')['azureblob']['connectionId']"
+                        }
+                    },
+                    "method": "get",
+                    "path": "/datasets/default/GetFileContentByPath",
+                    "queries": {
+                        "inferContentType": true,
+                        "path": "@triggerBody()?['SignatureUri']",
+                        "queryParametersSingleEncoded": true
+                    }
+                },
+                "runAfter": {
+                    "Hash_photo": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "ApiConnection"
+            },
+            "Hash_delivery_details": {
+                "inputs": {
+                    "body": {
+                        "Address": "@triggerBody()?['Address']",
+                        "Barcode": "@triggerBody()?['Barcode']",
+                        "City": "@triggerBody()?['City']",
+                        "Date": "@triggerBody()?['Date']",
+                        "DeliveryId": "@triggerBody()?['DeliveryId']",
+                        "DeliveryStatus": "@triggerBody()?['DeliveryStatus']",
+                        "Latitude": "@triggerBody()?['Latitude']",
+                        "Longitude": "@triggerBody()?['Longitude']",
+                        "Name": "@triggerBody()?['Name']",
+                        "Phone": "@triggerBody()?['Phone']",
+                        "PhotoUri": "@triggerBody()?['PhotoUri']",
+                        "SignatureUri": "@triggerBody()?['SignatureUri']",
+                        "State": "@triggerBody()?['State']",
+                        "TimeslotId": "@triggerBody()?['TimeslotId']",
+                        "TruckId": "@triggerBody()?['TruckId']",
+                        "Zipcode": "@triggerBody()?['Zipcode']"
+                    },
+                    "function": {
+                        "id": "/subscriptions/1351f53f-23e6-41d5-9615-fc64f09dc660/resourceGroups/hackaton19/providers/Microsoft.Web/sites/hackaton19/functions/HttpTrigger1"
+                    }
+                },
+                "runAfter": {
+                    "Hash_signature": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "Function"
+            },
+            "Hash_photo": {
+                "inputs": {
+                    "body": "@body('Get_photo').$content",
+                    "function": {
+                        "id": "/subscriptions/1351f53f-23e6-41d5-9615-fc64f09dc660/resourceGroups/hackaton19/providers/Microsoft.Web/sites/hackaton19/functions/HttpTrigger1"
+                    }
+                },
+                "runAfter": {
+                    "Get_photo": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "Function"
+            },
+            "Hash_signature": {
+                "inputs": {
+                    "body": "@body('Get_signature')['$content']",
+                    "function": {
+                        "id": "/subscriptions/1351f53f-23e6-41d5-9615-fc64f09dc660/resourceGroups/hackaton19/providers/Microsoft.Web/sites/hackaton19/functions/HttpTrigger1"
+                    }
+                },
+                "runAfter": {
+                    "Get_signature": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "Function"
+            },
+            "Initialize_variable": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "DeliveryId",
+                            "type": "String",
+                            "value": "@{string(triggerBody()['DeliveryId'])}"
+                        }
+                    ]
+                },
+                "runAfter": {},
+                "type": "InitializeVariable"
+            },
+            "Insert_or_Replace_Entity": {
+                "inputs": {
+                    "body": {
+                        "Address": "@triggerBody()?['Address']",
+                        "Barcode": "@triggerBody()?['Barcode']",
+                        "City": "@triggerBody()?['City']",
+                        "Date": "@triggerBody()?['Date']",
+                        "DeliveryId": "@triggerBody()?['DeliveryId']",
+                        "DeliveryStatus": "@triggerBody()?['DeliveryStatus']",
+                        "Latitude": "@triggerBody()?['Latitude']",
+                        "Longitude": "@triggerBody()?['Longitude']",
+                        "Name": "@triggerBody()?['Name']",
+                        "Phone": "@triggerBody()?['Phone']",
+                        "PhotoUri": "@triggerBody()?['PhotoUri']",
+                        "SignatureUri": "@triggerBody()?['SignatureUri']",
+                        "State": "@triggerBody()?['State']",
+                        "TimeslotId": "@triggerBody()?['TimeslotId']",
+                        "TruckId": "@triggerBody()?['TruckId']",
+                        "Zipcode": "@triggerBody()?['Zipcode']"
+                    },
+                    "host": {
+                        "connection": {
+                            "name": "@parameters('$connections')['azuretables']['connectionId']"
+                        }
+                    },
+                    "method": "put",
+                    "path": "/Tables/@{encodeURIComponent('DeliveredPackages')}/entities(PartitionKey='@{encodeURIComponent(triggerBody()?['Date'])}',RowKey='@{encodeURIComponent(variables('DeliveryId'))}')"
+                },
+                "runAfter": {
+                    "Initialize_variable": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "ApiConnection"
+            }
+        },
+        "contentVersion": "1.0.0.0",
+        "outputs": {},
+        "parameters": {
+            "$connections": {
+                "defaultValue": {},
+                "type": "Object"
+            }
+        },
+        "triggers": {
+            "manual": {
+                "inputs": {
+                    "schema": {
+                        "properties": {
+                            "Address": {
+                                "type": "string"
+                            },
+                            "Barcode": {
+                                "type": "string"
+                            },
+                            "City": {
+                                "type": "string"
+                            },
+                            "Date": {
+                                "type": "string"
+                            },
+                            "DeliveryId": {
+                                "type": "integer"
+                            },
+                            "DeliveryStatus": {
+                                "type": "integer"
+                            },
+                            "Latitude": {
+                                "type": "number"
+                            },
+                            "Longitude": {
+                                "type": "number"
+                            },
+                            "Name": {
+                                "type": "string"
+                            },
+                            "Phone": {
+                                "type": "string"
+                            },
+                            "PhotoUri": {
+                                "type": "string"
+                            },
+                            "SignatureUri": {
+                                "type": "string"
+                            },
+                            "State": {
+                                "type": "string"
+                            },
+                            "Timeslot": {
+                                "type": "string"
+                            },
+                            "TruckId": {
+                                "type": "string"
+                            },
+                            "Zipcode": {
+                                "type": "string"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "kind": "Http",
+                "type": "Request"
+            }
+        }
+    }
+}
