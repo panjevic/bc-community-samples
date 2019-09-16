@@ -1,0 +1,14 @@
+{
+    "properties": {
+        "buyer": {
+            "type": "string"
+        },
+        "key": {
+            "type": "string"
+        },
+        "packageId": {
+            "type": "string"
+        }
+    },
+    "type": "object"
+}

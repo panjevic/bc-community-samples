@@ -1,0 +1,32 @@
+#Explanation for tests: (-) not implemented (+) implemented
+
+---Test character token---
+What we know/what is needed:
+- Contract will be a ERC721 contract in its base.
+- Character is a structure holding attributes
+- Has a list of unique characters owner by users (millions hopefully)
+- Some attributes are immutable, some are mutable
+- Immutable attributes are generated with some enthropy (?)
+- Mutable attributes are all set to a default minimum
+- Mutable attributes are upgradable to their maximum.
+- Mutable attributes are upgradable by incremental steps.
+--- TBD stuff ---
+- Trading of cards pays up a % to contract balance
+- Minting, token sale, monetization etc
+- Character balancing (during the first period, f.ex. one month)
+- Mutable attributes change doable by the "Game contract"
+- Later we should empose stricter rules to disable possible cheating by upgrades from different game contracts (tBD)
+
+Tests:
+1.(+) Contract ERC721 deployed
+1.a (+) Contract ownership
+2.(+) Create and put character in array, is the same character in array
+3.(+) Put another character in array, are there 2
+4.(+) Is the second character in array the one we put in
+5.(+) Only enabled minter can mint
+6.(+) Check if immutable attributes are within a range guaranteeing enthropy
+6.(+) Check if immutable attributes are within the allowed range
+7.(+) Check if mutable attributes are within the allowed range
+8.(+) Check if minting with defaults gives correct values
+9.(+) Change the mutable attribute
+10.(+) Change the mutable attribute above the maximum

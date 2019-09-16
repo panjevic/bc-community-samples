@@ -1,0 +1,14 @@
+{
+    "type": "object",
+    "properties": {
+        "hero": {
+            "type": "string"
+        },
+        "price": {
+            "type": "number"
+        },
+        "seller": {
+            "type": "string"
+        }
+    }
+}
